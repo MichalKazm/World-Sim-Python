@@ -1,13 +1,17 @@
 from abc import ABC, abstractmethod
 
+from worldsim.World import World
+
+
 class Organism(ABC):
-    def __init__(self, strength: int, initiative: int, y: int, x: int):
+    def __init__(self, strength, initiative, y, x):
         self.__strength = strength
         self.__initiative = initiative
         self.__y = y
         self.__x = x
         self.__age = 0
         self.__alive = True
+        self.__world = None
 
     @property
     def strength(self):
@@ -33,8 +37,24 @@ class Organism(ABC):
     def alive(self):
         return self.__alive
 
+    @property
+    def world(self):
+        return self.__world
+
+    @world.setter
+    def world(self, world):
+        if isinstance(world, World):
+            self.__world = world
+
+    def dies(self):
+        self.__alive = False
+
     @abstractmethod
-    def collision(self, other: 'Organism'):
+    def createNew(self, y, x):
+        pass
+
+    @abstractmethod
+    def collision(self, other):
         pass
 
     @abstractmethod
