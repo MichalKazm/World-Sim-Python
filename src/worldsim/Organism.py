@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from worldsim.World import World
+from worldsim.world.World import World
 
 
 class Organism(ABC):
