@@ -4,39 +4,23 @@ from worldsim.display.GameCanvas import GameCanvas
 
 
 class World:
-    def __init__(self, rows, cols):
-        self.__rows = rows
+    def __init__(self, cols, rows):
         self.__cols = cols
+        self.__rows = rows
+        self.__turn = 0
         self.__order = []
         self.__window = tk.Tk()
+        self.__gameGrid = GameCanvas(self.__window, self.cols, self.rows)
 
         self.initWindow()
-
-    @property
-    def rows(self):
-        return self.__rows
 
     @property
     def cols(self):
         return self.__cols
 
-    def addOrganism(self, organism):
-        if 0 <= organism.y < self.rows and 0 <= organism.x < self.cols:
-            organism.world = self
-            self.__order.append(organism)
-            return True
-        else:
-            return False
-
-    def getOrganism(self, y, x):
-        for organism in self.__order:
-            if organism.alive and organism.y == y and organism.x == x:
-                return organism
-
-        return None
-
-    def sortOrder(self):
-        self.__order.sort(key=lambda organism : (organism.initiative, organism.age), reverse=True)
+    @property
+    def rows(self):
+        return self.__rows
 
     def center(self):
         window = self.__window
@@ -62,8 +46,64 @@ class World:
         window.resizable(False, False)
 
         # Initialize game grid
-        gameGrid = GameCanvas(window, self.rows, self.cols)
-        gameGrid.pack()
+        self.__gameGrid.pack()
+
+        # Initialize button frame
+        buttonFrame = tk.Frame(window)
+        buttonFrame.pack(fill="x")
+
+        nextTurnButton = tk.Button(buttonFrame, text="Next turn", command=self.takeTurn)
+        nextTurnButton.pack(side="right")
+
 
         self.center()
         window.mainloop()
+
+    def addOrganism(self, organism):
+        if 0 <= organism.x < self.cols and 0 <= organism.y < self.rows:
+            organism.world = self
+            self.__order.append(organism)
+            return True
+        else:
+            return False
+
+    def getOrganism(self, x, y):
+        for organism in self.__order:
+            if organism.alive and organism.x == x and organism.y == y:
+                return organism
+
+        return None
+
+    def removeDead(self):
+        alive = []
+        for organism in self.__order:
+            if organism.alive:
+                alive.append(organism)
+
+        self.__order = alive
+
+    def sortOrder(self):
+        self.__order.sort(key=lambda organism : (organism.initiative, organism.age), reverse=True)
+
+    def updateGame(self):
+        game = self.__gameGrid
+
+        game.clear()
+        game.draw(self.__order)
+
+    def takeTurn(self):
+        self.sortOrder()
+
+        # Number of organisms before the turn
+        n = len(self.__order)
+
+        # Only organisms that are alive and created before the turn will take action
+        for i in range(n):
+            organism = self.__order[i]
+
+            if organism.alive:
+                organism.action()
+
+        self.removeDead()
+        self.updateGame()
+        self.__turn += 1

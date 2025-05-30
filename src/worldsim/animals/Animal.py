@@ -6,40 +6,40 @@ from worldsim.Organism import Organism
 
 
 class Animal(Organism, ABC):
-    def __init__(self, strength, initiative, y, x):
-        super().__init__(strength, initiative, y, x)
+    def __init__(self, strength, initiative, x, y):
+        super().__init__(strength, initiative, x, y)
 
     @override
     def collision(self, other):
         if type(self) == type(other):
             success = False
 
-            if self.world.getOrganism(self.y - 1, self.x) is None:
-                success = self.world.addOrganism(self.createNew(self.y - 1, self.x))
+            if self.world.getOrganism(self.x, self.y - 1) is None:
+                success = self.world.addOrganism(self.createNew(self.x, self.y - 1))
 
-            if not success and self.world.getOrganism(self.y + 1, self.x) is None:
-                success = self.world.addOrganism(self.createNew(self.y + 1, self.x))
+            if not success and self.world.getOrganism(self.x, self.y + 1) is None:
+                success = self.world.addOrganism(self.createNew(self.x, self.y + 1))
 
-            if not success and self.world.getOrganism(self.y, self.x - 1) is None:
-                success = self.world.addOrganism(self.createNew(self.y, self.x - 1))
+            if not success and self.world.getOrganism(self.x - 1, self.y) is None:
+                success = self.world.addOrganism(self.createNew(self.x - 1, self.y))
 
-            if not success and self.world.getOrganism(self.y, self.x + 1) is None:
-                success = self.world.addOrganism(self.createNew(self.y, self.x + 1))
+            if not success and self.world.getOrganism(self.x + 1, self.y) is None:
+                success = self.world.addOrganism(self.createNew(self.x + 1, self.y))
 
-            if not success and self.world.getOrganism(other.y - 1, other.x) is None:
-                success = self.world.addOrganism(self.createNew(other.y - 1, other.x))
+            if not success and self.world.getOrganism(other.x, other.y - 1) is None:
+                success = self.world.addOrganism(self.createNew(other.x, other.y - 1))
 
-            if not success and self.world.getOrganism(other.y + 1, other.x) is None:
-                success = self.world.addOrganism(self.createNew(other.y + 1, other.x))
+            if not success and self.world.getOrganism(other.x, other.y + 1) is None:
+                success = self.world.addOrganism(self.createNew(other.x, other.y + 1))
 
-            if not success and self.world.getOrganism(other.y, other.x - 1) is None:
-                success = self.world.addOrganism(self.createNew(other.y, other.x - 1))
+            if not success and self.world.getOrganism(other.x - 1, other.y) is None:
+                success = self.world.addOrganism(self.createNew(other.x - 1, other.y))
 
-            if not success and self.world.getOrganism(other.y, other.x + 1) is None:
-                success = self.world.addOrganism(self.createNew(other.y, other.x + 1))
+            if not success and self.world.getOrganism(other.x + 1, other.y) is None:
+                success = self.world.addOrganism(self.createNew(other.x + 1, other.y))
         else:
-            self.__y = other.y
             self.__x = other.x
+            self.__y = other.y
             if self.strength >= other.strength:
                 other.dies()
             else:
@@ -54,16 +54,16 @@ class Animal(Organism, ABC):
         # Count available directions
         available = 0
 
-        if self.y > 0:
-            available += 1
-
-        if self.y < self.world.rows - 1:
-            available += 1
-
         if self.x > 0:
             available += 1
 
         if self.x < self.world.cols - 1:
+            available += 1
+
+        if self.y > 0:
+            available += 1
+
+        if self.y < self.world.rows - 1:
             available += 1
 
         # Move in a random available direction
@@ -101,11 +101,11 @@ class Animal(Organism, ABC):
             chosenMove -= 1
 
         if chosenMove < 0:
-            other = self.world.getOrganism(newY, newX)
+            other = self.world.getOrganism(newX, newY)
 
             if other is None:
-                self.__y = newY
                 self.__x = newX
+                self.__y = newY
             else:
                 self.collision(other)
 

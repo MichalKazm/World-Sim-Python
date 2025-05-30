@@ -1,15 +1,17 @@
 from abc import ABC, abstractmethod
 
-from worldsim.world.World import World
+from worldsim.display.World import World
 
 
 class Organism(ABC):
-    def __init__(self, strength, initiative, y, x):
+    def __init__(self, strength, initiative, x, y, symbol, color):
         self.__strength = strength
         self.__initiative = initiative
-        self.__y = y
         self.__x = x
+        self.__y = y
         self.__age = 0
+        self.__symbol = symbol
+        self.__color = color
         self.__alive = True
         self.__world = None
 
@@ -22,16 +24,24 @@ class Organism(ABC):
         return self.__initiative
 
     @property
-    def y(self):
-        return self.__y
-
-    @property
     def x(self):
         return self.__x
 
     @property
+    def y(self):
+        return self.__y
+
+    @property
     def age(self):
         return self.__age
+
+    @property
+    def symbol(self):
+        return self.__symbol
+
+    @property
+    def color(self):
+        return self.__color
 
     @property
     def alive(self):
@@ -50,7 +60,7 @@ class Organism(ABC):
         self.__alive = False
 
     @abstractmethod
-    def createNew(self, y, x):
+    def createNew(self, x, y):
         pass
 
     @abstractmethod
