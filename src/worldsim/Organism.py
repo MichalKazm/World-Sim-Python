@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
 
-from worldsim.display.World import World
-
-
 class Organism(ABC):
     def __init__(self, strength, initiative, x, y, symbol, color):
         self.__strength = strength
@@ -27,13 +24,25 @@ class Organism(ABC):
     def x(self):
         return self.__x
 
+    @x.setter
+    def x(self, newX):
+        self.__x = newX
+
     @property
     def y(self):
         return self.__y
 
+    @y.setter
+    def y(self, newY):
+        self.__y = newY
+
     @property
     def age(self):
         return self.__age
+
+    @age.setter
+    def age(self, newAge):
+        self.__age = newAge
 
     @property
     def symbol(self):
@@ -52,9 +61,8 @@ class Organism(ABC):
         return self.__world
 
     @world.setter
-    def world(self, world):
-        if isinstance(world, World):
-            self.__world = world
+    def world(self, newWorld):
+        self.__world = newWorld
 
     def dies(self):
         self.__alive = False

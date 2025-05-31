@@ -6,40 +6,57 @@ from worldsim.Organism import Organism
 
 
 class Animal(Organism, ABC):
-    def __init__(self, strength, initiative, x, y):
-        super().__init__(strength, initiative, x, y)
+    def __init__(self, strength, initiative, x, y, symbol, color):
+        super().__init__(strength, initiative, x, y, symbol, color)
 
     @override
     def collision(self, other):
+        # If two organisms are of the same type, they reproduce
         if type(self) == type(other):
             success = False
 
-            if self.world.getOrganism(self.x, self.y - 1) is None:
-                success = self.world.addOrganism(self.createNew(self.x, self.y - 1))
+            if 0 <= self.x < self.world.cols and 0 <= self.y - 1 < self.world.rows:
+                if not self.world.takenCells[(self.x, self.y - 1)]:
+                    success = self.world.addOrganism(self.createNew(self.x, self.y - 1))
 
-            if not success and self.world.getOrganism(self.x, self.y + 1) is None:
-                success = self.world.addOrganism(self.createNew(self.x, self.y + 1))
+            if not success:
+                if 0 <= self.x < self.world.cols and 0 <= self.y + 1 < self.world.rows:
+                    if not self.world.takenCells[(self.x, self.y + 1)]:
+                        success = self.world.addOrganism(self.createNew(self.x, self.y + 1))
 
-            if not success and self.world.getOrganism(self.x - 1, self.y) is None:
-                success = self.world.addOrganism(self.createNew(self.x - 1, self.y))
+            if not success:
+                if 0 <= self.x - 1 < self.world.cols and 0 <= self.y < self.world.rows:
+                    if not self.world.takenCells[(self.x - 1, self.y)]:
+                        success = self.world.addOrganism(self.createNew(self.x - 1, self.y))
 
-            if not success and self.world.getOrganism(self.x + 1, self.y) is None:
-                success = self.world.addOrganism(self.createNew(self.x + 1, self.y))
+            if not success:
+                if 0 <= self.x + 1 < self.world.cols and 0 <= self.y < self.world.rows:
+                    if not self.world.takenCells[(self.x + 1, self.y)]:
+                        success = self.world.addOrganism(self.createNew(self.x + 1, self.y))
 
-            if not success and self.world.getOrganism(other.x, other.y - 1) is None:
-                success = self.world.addOrganism(self.createNew(other.x, other.y - 1))
+            if not success:
+                if 0 <= other.x < self.world.cols and 0 <= other.y - 1 < self.world.rows:
+                    if not self.world.takenCells[(other.x, other.y - 1)]:
+                        success = self.world.addOrganism(self.createNew(other.x, other.y - 1))
 
-            if not success and self.world.getOrganism(other.x, other.y + 1) is None:
-                success = self.world.addOrganism(self.createNew(other.x, other.y + 1))
+            if not success:
+                if 0 <= other.x < self.world.cols and 0 <= other.y + 1 < self.world.rows:
+                    if not self.world.takenCells[(other.x, other.y + 1)]:
+                        success = self.world.addOrganism(self.createNew(other.x, other.y + 1))
 
-            if not success and self.world.getOrganism(other.x - 1, other.y) is None:
-                success = self.world.addOrganism(self.createNew(other.x - 1, other.y))
+            if not success:
+                if 0 <= other.x - 1 < self.world.cols and 0 <= other.y < self.world.rows:
+                    if not self.world.takenCells[(other.x - 1, other.y)]:
+                        success = self.world.addOrganism(self.createNew(other.x - 1, other.y))
 
-            if not success and self.world.getOrganism(other.x + 1, other.y) is None:
-                success = self.world.addOrganism(self.createNew(other.x + 1, other.y))
+            if not success:
+                if 0 <= other.x + 1 < self.world.cols and 0 <= other.y < self.world.rows:
+                    if not self.world.takenCells[(other.x + 1, other.y)]:
+                        success = self.world.addOrganism(self.createNew(other.x + 1, other.y))
         else:
-            self.__x = other.x
-            self.__y = other.y
+            self.world.takenCells[(self.x, self.y)] = False
+            self.x = other.x
+            self.y = other.y
             if self.strength >= other.strength:
                 other.dies()
             else:
@@ -70,7 +87,7 @@ class Animal(Organism, ABC):
         chosenMove = 4
 
         if available != 0:
-            chosenMove = random.randint(0, chosenMove - 1)
+            chosenMove = random.randint(0, available - 1)
 
         # Move up
         if self.y > 0:
@@ -104,9 +121,11 @@ class Animal(Organism, ABC):
             other = self.world.getOrganism(newX, newY)
 
             if other is None:
-                self.__x = newX
-                self.__y = newY
+                self.world.takenCells[(self.x, self.y)] = False
+                self.x = newX
+                self.y = newY
+                self.world.takenCells[(newX, newY)] = True
             else:
                 self.collision(other)
 
-        self.__age += 1
+        self.age += 1

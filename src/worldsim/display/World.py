@@ -9,8 +9,13 @@ class World:
         self.__rows = rows
         self.__turn = 0
         self.__order = []
+        self.takenCells = {}
         self.__window = tk.Tk()
         self.__gameGrid = GameCanvas(self.__window, self.cols, self.rows)
+
+        for x in range(cols):
+            for y in range(rows):
+                self.takenCells[(x, y)] = False
 
         self.initWindow()
 
@@ -40,7 +45,7 @@ class World:
 
     def initWindow(self):
         window = self.__window
-        # Initialize windows
+        # Initialize window
         window.title("Simulator")
         window.protocol("WM_DELETE_WINDOW", self.__window.destroy)
         window.resizable(False, False)
@@ -55,14 +60,17 @@ class World:
         nextTurnButton = tk.Button(buttonFrame, text="Next turn", command=self.takeTurn)
         nextTurnButton.pack(side="right")
 
-
         self.center()
-        window.mainloop()
+
+    def run(self):
+        self.updateGame()
+        self.__window.mainloop()
 
     def addOrganism(self, organism):
         if 0 <= organism.x < self.cols and 0 <= organism.y < self.rows:
             organism.world = self
             self.__order.append(organism)
+            self.takenCells[(organism.x, organism.y)] = True
             return True
         else:
             return False
@@ -96,7 +104,6 @@ class World:
 
         # Number of organisms before the turn
         n = len(self.__order)
-
         # Only organisms that are alive and created before the turn will take action
         for i in range(n):
             organism = self.__order[i]
