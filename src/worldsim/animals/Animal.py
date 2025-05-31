@@ -57,8 +57,15 @@ class Animal(Organism, ABC):
             if success:
                 self.world.appendLog(f"{self}: Reproduced with {other}")
         else:
+            # Needs to be done here to avoid circular import
+            from worldsim.animals.Antelope import Antelope
+
             self.world.appendLog(f"{self}: Attacked {other}")
 
+            if isinstance(other, Antelope):
+                self.world.takenCells[(self.x, self.y)] = False
+                self.x = other.x
+                self.y = other.y
             if not other.didDeflectAttack(self):
                 self.world.takenCells[(self.x, self.y)] = False
                 self.x = other.x
