@@ -53,7 +53,12 @@ class Animal(Organism, ABC):
                 if 0 <= other.x + 1 < self.world.cols and 0 <= other.y < self.world.rows:
                     if not self.world.takenCells[(other.x + 1, other.y)]:
                         success = self.world.addOrganism(self.createNew(other.x + 1, other.y))
+
+            if success:
+                self.world.appendLog(f"{self}: Reproduced with {other}")
         else:
+            self.world.appendLog(f"{self}: Attacked {other}")
+
             self.world.takenCells[(self.x, self.y)] = False
             self.x = other.x
             self.y = other.y
@@ -121,6 +126,8 @@ class Animal(Organism, ABC):
             other = self.world.getOrganism(newX, newY)
 
             if other is None:
+                self.world.appendLog(f"{self}: Moved to ({newX}, {newY})")
+
                 self.world.takenCells[(self.x, self.y)] = False
                 self.x = newX
                 self.y = newY

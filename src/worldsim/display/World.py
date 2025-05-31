@@ -11,13 +11,16 @@ class World:
         self.__order = []
         self.takenCells = {}
         self.__window = tk.Tk()
-        self.__gameGrid = GameCanvas(self.__window, self.cols, self.rows)
+        self.__gameGrid = None
+        self.__logs = None
 
         for x in range(cols):
             for y in range(rows):
                 self.takenCells[(x, y)] = False
 
         self.initWindow()
+
+        self.appendLog("-- Turn 0 --")
 
     @property
     def cols(self):
@@ -50,8 +53,28 @@ class World:
         window.protocol("WM_DELETE_WINDOW", self.__window.destroy)
         window.resizable(False, False)
 
+        # Initialize main frame
+        mainFrame = tk.Frame(window)
+        mainFrame.pack(fill="both")
+
         # Initialize game grid
-        self.__gameGrid.pack()
+        self.__gameGrid = GameCanvas(mainFrame, self.cols, self.rows)
+        self.__gameGrid.pack(side="left")
+
+        # Initialize logs
+        logFrame = tk.Frame(mainFrame)
+        logFrame.pack(side="right", fill="both")
+
+        # Initialize scrollbar
+        scrollbar = tk.Scrollbar(logFrame)
+        scrollbar.pack(side="right", fill="y")
+
+        # Initialize text for logs
+        self.__logs = tk.Text(logFrame, yscrollcommand=scrollbar.set, wrap="word", font=("Serif", 10) , width=40)
+        self.__logs.pack(side="left", fill="both")
+
+        scrollbar.config(command=self.__logs.yview)
+
 
         # Initialize button frame
         buttonFrame = tk.Frame(window)
@@ -62,15 +85,16 @@ class World:
 
         self.center()
 
-    def run(self):
-        self.updateGame()
-        self.__window.mainloop()
+    def appendLog(self, message):
+        self.__logs.insert(tk.END, message + "\n")
+        self.__logs.see(tk.END)
 
     def addOrganism(self, organism):
         if 0 <= organism.x < self.cols and 0 <= organism.y < self.rows:
             organism.world = self
             self.__order.append(organism)
             self.takenCells[(organism.x, organism.y)] = True
+            self.appendLog(f"{organism}: Was created")
             return True
         else:
             return False
@@ -104,6 +128,9 @@ class World:
 
         # Number of organisms before the turn
         n = len(self.__order)
+
+        self.appendLog(f"-- Turn {self.__turn} --")
+
         # Only organisms that are alive and created before the turn will take action
         for i in range(n):
             organism = self.__order[i]
@@ -114,3 +141,7 @@ class World:
         self.removeDead()
         self.updateGame()
         self.__turn += 1
+
+    def run(self):
+        self.updateGame()
+        self.__window.mainloop()

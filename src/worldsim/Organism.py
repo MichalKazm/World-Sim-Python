@@ -65,6 +65,7 @@ class Organism(ABC):
         self.__world = newWorld
 
     def dies(self):
+        self.world.appendLog(f"{self}: Died")
         self.__alive = False
 
     @abstractmethod
@@ -78,3 +79,6 @@ class Organism(ABC):
     @abstractmethod
     def action(self):
         pass
+
+    def __str__(self):
+        return f"{self.__class__.__name__} ({self.x}, {self.y})"

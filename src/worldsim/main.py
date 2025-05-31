@@ -1,7 +1,7 @@
 from worldsim.display.World import World
 from worldsim.animals.Wolf import Wolf
 
-world = World(65,35)
+world = World(55,35)
 
 world.addOrganism(Wolf(2, 2))
 world.addOrganism(Wolf(2, 3))
