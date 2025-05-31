@@ -64,6 +64,9 @@ class Organism(ABC):
     def world(self, newWorld):
         self.__world = newWorld
 
+    def didDeflectAttack(self, attacker):
+        return False
+
     def dies(self):
         self.world.appendLog(f"{self}: Died")
         self.__alive = False

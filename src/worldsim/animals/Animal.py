@@ -59,13 +59,14 @@ class Animal(Organism, ABC):
         else:
             self.world.appendLog(f"{self}: Attacked {other}")
 
-            self.world.takenCells[(self.x, self.y)] = False
-            self.x = other.x
-            self.y = other.y
-            if self.strength >= other.strength:
-                other.dies()
-            else:
-                self.dies()
+            if not other.didDeflectAttack(self):
+                self.world.takenCells[(self.x, self.y)] = False
+                self.x = other.x
+                self.y = other.y
+                if self.strength >= other.strength:
+                    other.dies()
+                else:
+                    self.dies()
 
 
     @override
