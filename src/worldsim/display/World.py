@@ -70,7 +70,7 @@ class World:
         scrollbar.pack(side="right", fill="y")
 
         # Initialize text for logs
-        self.__logs = tk.Text(logFrame, yscrollcommand=scrollbar.set, wrap="word", font=("Serif", 10) , width=40)
+        self.__logs = tk.Text(logFrame, yscrollcommand=scrollbar.set, wrap="word", font=("Serif", 10) , width=50)
         self.__logs.pack(side="left", fill="both")
 
         scrollbar.config(command=self.__logs.yview)
