@@ -2,6 +2,8 @@ import random
 from typing import override
 
 from worldsim.animals.Animal import Animal
+from worldsim.plants.Plant import Plant
+
 
 class Fox(Animal):
     def __init__(self, x, y):
@@ -100,6 +102,13 @@ class Fox(Animal):
                 self.y = newY
                 self.world.takenCells[(newX, newY)] = True
             else:
-                self.collision(other)
+                if isinstance(other, Plant):
+                    self.world.takenCells[(self.x, self.y)] = False
+                    self.x = newX
+                    self.y = newY
+                    self.world.appendLog(f"{self}: Moved to ({newX}, {newY})")
+                    other.collision(self)
+                else:
+                    self.collision(other)
 
         self.age += 1

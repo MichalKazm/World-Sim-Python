@@ -3,6 +3,7 @@ from abc import ABC
 from typing import override
 
 from worldsim.Organism import Organism
+from worldsim.plants.Plant import Plant
 
 
 class Animal(Organism, ABC):
@@ -141,6 +142,13 @@ class Animal(Organism, ABC):
                 self.y = newY
                 self.world.takenCells[(newX, newY)] = True
             else:
-                self.collision(other)
+                if isinstance(other, Plant):
+                    self.world.takenCells[(self.x, self.y)] = False
+                    self.x = newX
+                    self.y = newY
+                    self.world.appendLog(f"{self}: Moved to ({newX}, {newY})")
+                    other.collision(self)
+                else:
+                    self.collision(other)
 
         self.age += 1

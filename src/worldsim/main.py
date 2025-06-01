@@ -4,6 +4,7 @@ from worldsim.animals.Sheep import Sheep
 from worldsim.animals.Fox import Fox
 from worldsim.animals.Turtle import Turtle
 from worldsim.animals.Antelope import Antelope
+from worldsim.plants.Grass import Grass
 
 world = World(55,35)
 
@@ -15,6 +16,7 @@ world.addOrganism(Sheep(20, 21))
 world.addOrganism(Fox(10, 10))
 world.addOrganism(Turtle(5, 5))
 world.addOrganism(Antelope(30, 30))
+world.addOrganism(Grass(40, 0))
 
 world.run()
 
