@@ -1,7 +1,7 @@
 import tkinter as tk
 
 class GameCanvas(tk.Canvas):
-    def __init__(self, parent, cols, rows, cell_size=25):
+    def __init__(self, parent, cols, rows, cell_size=30):
         height = rows * cell_size
         width = cols * cell_size
         super().__init__(parent, width=width + 4, height=height + 4, bg="black", highlightthickness=0)
@@ -22,7 +22,7 @@ class GameCanvas(tk.Canvas):
                 y2 = y1 + self.__cell_size
 
                 rect = self.create_rectangle(x1, y1, x2, y2, fill="white")
-                label = self.create_text((x1 + x2) // 2, (y1 + y2) // 2, text="", font=("Arial", 10, "bold"))
+                label = self.create_text((x1 + x2) // 2, (y1 + y2) // 2, text="", font=("Arial", 12, "bold"))
 
                 self.__cells[(x, y)] = (rect, label)
 
