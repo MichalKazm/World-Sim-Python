@@ -16,6 +16,10 @@ class Organism(ABC):
     def strength(self):
         return self.__strength
 
+    @strength.setter
+    def strength(self, newStrength):
+        self.__strength = newStrength
+
     @property
     def initiative(self):
         return self.__initiative
