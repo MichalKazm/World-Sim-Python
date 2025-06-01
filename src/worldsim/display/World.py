@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from worldsim.display.GameCanvas import GameCanvas
+from worldsim.plants.Hogweed import Hogweed
 
 
 class World:
@@ -10,6 +11,7 @@ class World:
         self.__turn = 0
         self.__order = []
         self.takenCells = {}
+        self.hogweedMap = {}
         self.__window = tk.Tk()
         self.__gameGrid = None
         self.__logs = None
@@ -17,6 +19,7 @@ class World:
         for x in range(cols):
             for y in range(rows):
                 self.takenCells[(x, y)] = False
+                self.hogweedMap[(x, y)] = False
 
         self.initWindow()
 
@@ -91,6 +94,8 @@ class World:
 
     def addOrganism(self, organism):
         if 0 <= organism.x < self.cols and 0 <= organism.y < self.rows:
+            if isinstance(organism, Hogweed):
+                self.hogweedMap[(organism.x, organism.y)] = True
             organism.world = self
             self.__order.append(organism)
             self.takenCells[(organism.x, organism.y)] = True
