@@ -141,3 +141,6 @@ venv/
 # Datasources and scratch files
 .idea/**/scratches/
 .idea/**/consoles/
+
+# Save file
+save.txt

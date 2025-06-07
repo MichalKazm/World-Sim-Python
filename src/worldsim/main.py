@@ -31,5 +31,3 @@ world.addOrganism(DeadlyNightshade(39, 5))
 world.addOrganism(Hogweed(5, 15))
 
 world.run()
-
-print("Hello World!")

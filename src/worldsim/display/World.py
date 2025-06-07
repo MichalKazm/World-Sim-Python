@@ -1,7 +1,17 @@
 import tkinter as tk
 
+from worldsim.animals.Antelope import Antelope
+from worldsim.animals.CyberSheep import CyberSheep
+from worldsim.animals.Fox import Fox
 from worldsim.animals.Human import Human
+from worldsim.animals.Sheep import Sheep
+from worldsim.animals.Turtle import Turtle
+from worldsim.animals.Wolf import Wolf
 from worldsim.display.GameCanvas import GameCanvas
+from worldsim.plants.Dandelion import Dandelion
+from worldsim.plants.DeadlyNightshade import DeadlyNightshade
+from worldsim.plants.Grass import Grass
+from worldsim.plants.Guarana import Guarana
 from worldsim.plants.Hogweed import Hogweed
 
 
@@ -92,13 +102,18 @@ class World:
         nextTurnButton = tk.Button(buttonFrame, text="Next turn", command=self.takeTurn)
         nextTurnButton.pack(side="right")
 
+        loadButton = tk.Button(buttonFrame, text="Load", command=self.load)
+        loadButton.pack(side="right")
+
+        saveButton = tk.Button(buttonFrame, text="Save", command=self.save)
+        saveButton.pack(side="right")
+
         # Bind keys to actions
         window.bind("<w>", lambda event: (setattr(self.__human, "nextMove", "W"), self.takeTurn()) if self.__human else None)
         window.bind("<s>", lambda event: (setattr(self.__human, "nextMove", "S"), self.takeTurn()) if self.__human else None)
         window.bind("<a>", lambda event: (setattr(self.__human, "nextMove", "A"), self.takeTurn()) if self.__human else None)
         window.bind("<d>", lambda event: (setattr(self.__human, "nextMove", "D"), self.takeTurn()) if self.__human else None)
         window.bind("<f>", lambda event: (setattr(self.__human, "abilityTimer", 5), self.updateGame()) if self.__human and self.__human.abilityTimer == -5 else None)
-
 
         self.center()
 
@@ -181,3 +196,90 @@ class World:
     def run(self):
         self.updateGame()
         self.__window.mainloop()
+
+    def save(self):
+        with open("save.txt", "w") as file:
+            file.write(f"{self.rows}\n")
+            file.write(f"{self.cols}\n")
+            file.write(f"{self.__turn}\n")
+            file.write("---\n")
+
+            for organism in self.__order:
+                file.write(f"{organism.__class__.__name__};{organism.x};{organism.y};{organism.age};{organism.strength}\n")
+
+            file.write("---\n")
+
+            file.write(self.__logs.get("1.0", "end-1c"))
+
+            if not self.human is None:
+                file.write("---\n")
+                file.write(f"{self.human.abilityTimer}")
+
+    def load(self):
+        with open("save.txt", "r") as file:
+            self.__rows = int(file.readline().strip())
+            self.__cols = int(file.readline().strip())
+            self.__turn = int(file.readline().strip())
+
+            self.__human = None
+            self.__order = []
+            self.takenCells = {}
+            self.hogweedMap = {}
+
+            for x in range(self.__cols):
+                for y in range(self.__rows):
+                    self.takenCells[(x, y)] = False
+                    self.hogweedMap[(x, y)] = False
+
+            file.readline() # ---
+
+            for line in file:
+                if line.strip() == "---":
+                    break
+
+                name, x, y, age, strength = line.split(";")
+                x, y, age, strength = map(int, (x, y, age, strength))
+
+                classes = {
+                    "Antelope": Antelope,
+                    "CyberSheep": CyberSheep,
+                    "Fox": Fox,
+                    "Human": Human,
+                    "Sheep": Sheep,
+                    "Turtle": Turtle,
+                    "Wolf": Wolf,
+                    "Dandelion": Dandelion,
+                    "DeadlyNightshade": DeadlyNightshade,
+                    "Grass": Grass,
+                    "Guarana": Guarana,
+                    "Hogweed": Hogweed,
+                }
+
+                organism = classes.get(name)
+
+                if organism:
+                    new_organism = organism(x, y)
+                    new_organism.age = age
+                    new_organism.strength = strength
+
+                    self.addOrganism(new_organism)
+
+            oldWindow = self.__window
+            self.__window = tk.Tk()
+            self.__gameGrid = None
+
+            self.__logs = None
+
+            self.initWindow()
+            oldWindow.destroy()
+
+            for line in file:
+                if line.strip() == "---":
+                    break
+
+                self.appendLog(line.strip())
+
+            if not self.human is None:
+                self.human.abilityTimer = int(file.readline().strip())
+
+            self.updateGame()
