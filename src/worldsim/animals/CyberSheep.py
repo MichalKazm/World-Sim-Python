@@ -28,7 +28,6 @@ class CyberSheep(Animal):
                         closestY = otherY
 
         if not distance is None:
-            print(f"{closestX}, {closestY}")
             if closestY < self.y:
                 # Move up
                 newY = self.y - 1

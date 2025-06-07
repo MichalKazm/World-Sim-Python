@@ -1,5 +1,8 @@
 import tkinter as tk
 
+from worldsim.animals.Human import Human
+
+
 class GameCanvas(tk.Canvas):
     def __init__(self, parent, cols, rows, cell_size=30):
         height = rows * cell_size
@@ -37,4 +40,7 @@ class GameCanvas(tk.Canvas):
                 rect, label = self.__cells[(organism.x, organism.y)]
 
                 self.itemconfig(rect, fill=organism.color)
+                if isinstance(organism, Human) and organism.abilityTimer > 0:
+                    self.itemconfig(rect, fill=organism.abilityColor)
+
                 self.itemconfig(label, text=organism.symbol)

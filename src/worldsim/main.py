@@ -5,6 +5,7 @@ from worldsim.animals.Fox import Fox
 from worldsim.animals.Turtle import Turtle
 from worldsim.animals.Antelope import Antelope
 from worldsim.animals.CyberSheep import CyberSheep
+from worldsim.animals.Human import Human
 from worldsim.plants.Grass import Grass
 from worldsim.plants.Dandelion import Dandelion
 from worldsim.plants.Guarana import Guarana
@@ -22,6 +23,7 @@ world.addOrganism(Fox(10, 10))
 world.addOrganism(Turtle(5, 5))
 world.addOrganism(Antelope(30, 19))
 world.addOrganism(CyberSheep(39, 19))
+world.addOrganism(Human(20, 10))
 world.addOrganism(Grass(39, 0))
 world.addOrganism(Dandelion(39 , 10))
 world.addOrganism(Guarana(25, 5))

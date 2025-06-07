@@ -1,5 +1,6 @@
 import tkinter as tk
 
+from worldsim.animals.Human import Human
 from worldsim.display.GameCanvas import GameCanvas
 from worldsim.plants.Hogweed import Hogweed
 
@@ -8,7 +9,8 @@ class World:
     def __init__(self, cols, rows):
         self.__cols = cols
         self.__rows = rows
-        self.__turn = 0
+        self.__turn = 1
+        self.__human = None
         self.__order = []
         self.takenCells = {}
         self.hogweedMap = {}
@@ -86,6 +88,14 @@ class World:
         nextTurnButton = tk.Button(buttonFrame, text="Next turn", command=self.takeTurn)
         nextTurnButton.pack(side="right")
 
+        # Bind keys to actions
+        window.bind("<w>", lambda event: (setattr(self.__human, "nextMove", "W"), self.takeTurn()) if self.__human else None)
+        window.bind("<s>", lambda event: (setattr(self.__human, "nextMove", "S"), self.takeTurn()) if self.__human else None)
+        window.bind("<a>", lambda event: (setattr(self.__human, "nextMove", "A"), self.takeTurn()) if self.__human else None)
+        window.bind("<d>", lambda event: (setattr(self.__human, "nextMove", "D"), self.takeTurn()) if self.__human else None)
+        window.bind("<f>", lambda event: (setattr(self.__human, "abilityTimer", 5), self.updateGame()) if self.__human and self.__human.abilityTimer == -5 else None)
+
+
         self.center()
 
     def appendLog(self, message):
@@ -93,6 +103,17 @@ class World:
         self.__logs.see(tk.END)
 
     def addOrganism(self, organism):
+        addedHuman = False
+
+        # Only one human can be present in the world
+        if isinstance(organism, Human):
+            if self.__human is None:
+                self.__human = organism
+                addedHuman = True
+            else:
+                return False
+
+
         if 0 <= organism.x < self.cols and 0 <= organism.y < self.rows:
             if isinstance(organism, Hogweed):
                 self.hogweedMap[(organism.x, organism.y)] = True
@@ -102,6 +123,8 @@ class World:
             self.appendLog(f"{organism}: Was created")
             return True
         else:
+            if addedHuman:
+                self.__human = None
             return False
 
     def getOrganism(self, x, y):
@@ -116,6 +139,8 @@ class World:
         for organism in self.__order:
             if organism.alive:
                 alive.append(organism)
+            elif isinstance(organism, Human):
+                self.__human = None
 
         self.__order = alive
 
