@@ -35,6 +35,10 @@ class World:
     def rows(self):
         return self.__rows
 
+    @property
+    def human(self):
+        return self.__human
+
     def center(self):
         window = self.__window
 
@@ -63,7 +67,7 @@ class World:
         mainFrame.pack(fill="both")
 
         # Initialize game grid
-        self.__gameGrid = GameCanvas(mainFrame, self.cols, self.rows)
+        self.__gameGrid = GameCanvas(self, mainFrame, self.cols, self.rows)
         self.__gameGrid.pack(side="left")
 
         # Initialize logs
@@ -75,7 +79,7 @@ class World:
         scrollbar.pack(side="right", fill="y")
 
         # Initialize text for logs
-        self.__logs = tk.Text(logFrame, yscrollcommand=scrollbar.set, wrap="word", font=("Serif", 10) , width=50)
+        self.__logs = tk.Text(logFrame, yscrollcommand=scrollbar.set, wrap="word", font=("Serif", 10) , width=50, state="disabled")
         self.__logs.pack(side="left", fill="both")
 
         scrollbar.config(command=self.__logs.yview)
@@ -99,8 +103,10 @@ class World:
         self.center()
 
     def appendLog(self, message):
+        self.__logs.config(state="normal")
         self.__logs.insert(tk.END, message + "\n")
         self.__logs.see(tk.END)
+        self.__logs.config(state="disabled")
 
     def addOrganism(self, organism):
         addedHuman = False
