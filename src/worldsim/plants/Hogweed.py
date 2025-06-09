@@ -33,30 +33,107 @@ class Hogweed(Plant):
         # Kill animals adjacent to this plant
         killed = 0
 
-        # Cell above
-        other = self.world.getOrganism(self.x, self.y - 1)
-        if isinstance(other, Animal) and not isinstance(other, CyberSheep):
-            self.world.takenCells[(other.x, other.y)] = False
-            other.dies()
-            killed += 1
-        # Cell below
-        other = self.world.getOrganism(self.x, self.y + 1)
-        if isinstance(other, Animal) and not isinstance(other, CyberSheep):
-            self.world.takenCells[(other.x, other.y)] = False
-            other.dies()
-            killed += 1
-        # Cell to the left
-        other = self.world.getOrganism(self.x - 1, self.y)
-        if isinstance(other, Animal) and not isinstance(other, CyberSheep):
-            self.world.takenCells[(other.x, other.y)] = False
-            other.dies()
-            killed += 1
-        # Cell to the right
-        other = self.world.getOrganism(self.x + 1, self.y)
-        if isinstance(other, Animal) and not isinstance(other, CyberSheep):
-            self.world.takenCells[(other.x, other.y)] = False
-            other.dies()
-            killed += 1
+        if self.world.gridType == "square":
+            # Cell above
+            other = self.world.getOrganism(self.x, self.y - 1)
+            if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                self.world.takenCells[(other.x, other.y)] = False
+                other.dies()
+                killed += 1
+            # Cell below
+            other = self.world.getOrganism(self.x, self.y + 1)
+            if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                self.world.takenCells[(other.x, other.y)] = False
+                other.dies()
+                killed += 1
+            # Cell to the left
+            other = self.world.getOrganism(self.x - 1, self.y)
+            if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                self.world.takenCells[(other.x, other.y)] = False
+                other.dies()
+                killed += 1
+            # Cell to the right
+            other = self.world.getOrganism(self.x + 1, self.y)
+            if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                self.world.takenCells[(other.x, other.y)] = False
+                other.dies()
+                killed += 1
+        else:
+            # Up
+            other = self.world.getOrganism(self.x, self.y - 1)
+            if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                self.world.takenCells[(other.x, other.y)] = False
+                other.dies()
+                killed += 1
+
+            # Down
+            other = self.world.getOrganism(self.x, self.y + 1)
+            if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                self.world.takenCells[(other.x, other.y)] = False
+                other.dies()
+                killed += 1
+
+            if self.x % 2 == 0:
+                # Upper column
+
+                # U-Left
+                other = self.world.getOrganism(self.x - 1, self.y - 1)
+                if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                    self.world.takenCells[(other.x, other.y)] = False
+                    other.dies()
+                    killed += 1
+
+                # D-Left
+                other = self.world.getOrganism(self.x - 1, self.y)
+                if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                    self.world.takenCells[(other.x, other.y)] = False
+                    other.dies()
+                    killed += 1
+
+                # U-Right
+                other = self.world.getOrganism(self.x + 1, self.y - 1)
+                if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                    self.world.takenCells[(other.x, other.y)] = False
+                    other.dies()
+                    killed += 1
+
+                # D-Right
+                other = self.world.getOrganism(self.x + 1, self.y)
+                if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                    self.world.takenCells[(other.x, other.y)] = False
+                    other.dies()
+                    killed += 1
+            else:
+                #Lower column
+
+                # U-Left
+                other = self.world.getOrganism(self.x - 1, self.y)
+                if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                    self.world.takenCells[(other.x, other.y)] = False
+                    other.dies()
+                    killed += 1
+
+                # D-Left
+                other = self.world.getOrganism(self.x - 1, self.y + 1)
+                if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                    self.world.takenCells[(other.x, other.y)] = False
+                    other.dies()
+                    killed += 1
+
+                # U-Right
+                other = self.world.getOrganism(self.x + 1, self.y)
+                if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                    self.world.takenCells[(other.x, other.y)] = False
+                    other.dies()
+                    killed += 1
+
+                # D-Right
+                other = self.world.getOrganism(self.x + 1, self.y + 1)
+                if isinstance(other, Animal) and not isinstance(other, CyberSheep):
+                    self.world.takenCells[(other.x, other.y)] = False
+                    other.dies()
+                    killed += 1
+
 
         if killed > 0:
             self.world.appendLog(f"{self}: Killed {killed} animals adjacent to it")

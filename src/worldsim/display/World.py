@@ -1,4 +1,5 @@
 import tkinter as tk
+from typing import Literal
 
 from worldsim.animals.Antelope import Antelope
 from worldsim.animals.CyberSheep import CyberSheep
@@ -7,7 +8,8 @@ from worldsim.animals.Human import Human
 from worldsim.animals.Sheep import Sheep
 from worldsim.animals.Turtle import Turtle
 from worldsim.animals.Wolf import Wolf
-from worldsim.display.GameCanvas import GameCanvas
+from worldsim.display.SquareCanvas import SquareCanvas
+from worldsim.display.HexCanvas import HexCanvas
 from worldsim.plants.Dandelion import Dandelion
 from worldsim.plants.DeadlyNightshade import DeadlyNightshade
 from worldsim.plants.Grass import Grass
@@ -16,7 +18,8 @@ from worldsim.plants.Hogweed import Hogweed
 
 
 class World:
-    def __init__(self, cols, rows):
+    def __init__(self, gridType: Literal["square", "hex"], cols, rows):
+        self.__gridType = gridType
         self.__cols = cols
         self.__rows = rows
         self.__turn = 1
@@ -36,6 +39,10 @@ class World:
         self.initWindow()
 
         self.appendLog("-- Turn 0 --")
+
+    @property
+    def gridType(self):
+        return self.__gridType
 
     @property
     def cols(self):
@@ -77,7 +84,11 @@ class World:
         mainFrame.pack(fill="both")
 
         # Initialize game grid
-        self.__gameGrid = GameCanvas(self, mainFrame, self.cols, self.rows)
+        if self.gridType == "square":
+            self.__gameGrid = SquareCanvas(self, mainFrame, self.cols, self.rows)
+        else:
+            self.__gameGrid = HexCanvas(self, mainFrame, self.cols, self.rows)
+
         self.__gameGrid.pack(side="left")
 
         # Initialize logs
@@ -109,9 +120,11 @@ class World:
         saveButton.pack(side="right")
 
         # Bind keys to actions
+        window.bind("<q>", lambda event: (setattr(self.__human, "nextMove", "Q"), self.takeTurn()) if self.__human else None)
         window.bind("<w>", lambda event: (setattr(self.__human, "nextMove", "W"), self.takeTurn()) if self.__human else None)
-        window.bind("<s>", lambda event: (setattr(self.__human, "nextMove", "S"), self.takeTurn()) if self.__human else None)
+        window.bind("<e>", lambda event: (setattr(self.__human, "nextMove", "E"), self.takeTurn()) if self.__human else None)
         window.bind("<a>", lambda event: (setattr(self.__human, "nextMove", "A"), self.takeTurn()) if self.__human else None)
+        window.bind("<s>", lambda event: (setattr(self.__human, "nextMove", "S"), self.takeTurn()) if self.__human else None)
         window.bind("<d>", lambda event: (setattr(self.__human, "nextMove", "D"), self.takeTurn()) if self.__human else None)
         window.bind("<f>", lambda event: (setattr(self.__human, "abilityTimer", 5), self.updateGame()) if self.__human and self.__human.abilityTimer == -5 else None)
 
@@ -199,6 +212,7 @@ class World:
 
     def save(self):
         with open("save.txt", "w") as file:
+            file.write(f"{self.gridType}\n")
             file.write(f"{self.rows}\n")
             file.write(f"{self.cols}\n")
             file.write(f"{self.__turn}\n")
@@ -217,6 +231,7 @@ class World:
 
     def load(self):
         with open("save.txt", "r") as file:
+            self.__gridType = str(file.readline().strip())
             self.__rows = int(file.readline().strip())
             self.__cols = int(file.readline().strip())
             self.__turn = int(file.readline().strip())
@@ -273,11 +288,16 @@ class World:
             self.initWindow()
             oldWindow.destroy()
 
+            log_lines = []
             for line in file:
                 if line.strip() == "---":
                     break
+                log_lines.append(line.strip())
 
-                self.appendLog(line.strip())
+            self.__logs.config(state="normal")
+            self.__logs.insert(tk.END, "\n".join(log_lines) + "\n")
+            self.__logs.see(tk.END)
+            self.__logs.config(state="disabled")
 
             if not self.human is None:
                 self.human.abilityTimer = int(file.readline().strip())

@@ -71,41 +71,123 @@ class Human(Animal):
                 doubleMove = True
 
         if doubleMove:
-            match self.nextMove:
-                case "W":
-                    if self.y > 1:
-                        newY = self.y -2
-                        moved = True
-                case "S":
-                    if self.y < self.world.rows - 2:
-                        newY = self.y + 2
-                        moved = True
-                case "A":
-                    if self.x > 1:
-                        newX = self.x - 2
-                        moved = True
-                case "D":
-                    if self.x < self.world.cols - 2:
-                        newX = self.x + 2
-                        moved = True
+            if self.world.gridType == "square":
+                match self.nextMove:
+                    case "W":
+                        if self.y > 1:
+                            newY = self.y -2
+                            moved = True
+                    case "S":
+                        if self.y < self.world.rows - 2:
+                            newY = self.y + 2
+                            moved = True
+                    case "A":
+                        if self.x > 1:
+                            newX = self.x - 2
+                            moved = True
+                    case "D":
+                        if self.x < self.world.cols - 2:
+                            newX = self.x + 2
+                            moved = True
+            else:
+                match self.nextMove:
+                    case "Q":
+                        if self.x > 1 and self.y > 1:
+                            newX = self.x - 2
+                            newY = self.y - 1
+                            moved = True
+                    case "W":
+                        if self.y > 1:
+                            newY = self.y - 2
+                            moved = True
+                    case "E":
+                        if self.x < self.world.cols - 2 and self.y > 1:
+                            newX = self.x + 2
+                            newY = self.y - 1
+                            moved = True
+                    case "A":
+                        if self.x > 1 and self.y < self.world.rows - 2:
+                            newX = self.x - 2
+                            newY = self.y + 1
+                            moved = True
+                    case "S":
+                        if self.y < self.world.rows - 2:
+                            newY = self.y + 2
+                            moved = True
+                    case "D":
+                        if self.x < self.world.cols - 2 and self.y < self.world.rows - 2:
+                            newX = self.x + 2
+                            newY = self.y + 1
+                            moved = True
         else:
-            match self.nextMove:
-                case "W":
-                    if self.y > 0:
-                        newY = self.y - 1
-                        moved = True
-                case "S":
-                    if self.y < self.world.rows - 1:
-                        newY = self.y + 1
-                        moved = True
-                case "A":
-                    if self.x > 0:
-                        newX = self.x - 1
-                        moved = True
-                case "D":
-                    if self.x < self.world.cols - 1:
-                        newX = self.x + 1
-                        moved = True
+            if self.world.gridType == "square":
+                match self.nextMove:
+                    case "W":
+                        if self.y > 0:
+                            newY = self.y - 1
+                            moved = True
+                    case "S":
+                        if self.y < self.world.rows - 1:
+                            newY = self.y + 1
+                            moved = True
+                    case "A":
+                        if self.x > 0:
+                            newX = self.x - 1
+                            moved = True
+                    case "D":
+                        if self.x < self.world.cols - 1:
+                            newX = self.x + 1
+                            moved = True
+            else:
+                match self.nextMove:
+                    case "Q":
+                        if self.x % 2 == 0:
+                            if self.x > 0 and self.y > 0:
+                                newX = self.x - 1
+                                newY = self.y - 1
+                                moved = True
+                        else:
+                            if self.x > 0:
+                                newX = self.x - 1
+                                moved = True
+                    case "W":
+                        if self.y > 0:
+                            newY = self.y - 1
+                            moved = True
+                    case "E":
+                        if self.x % 2 == 0:
+                            if self.x < self.world.cols - 1 and self.y > 0:
+                                newX = self.x + 1
+                                newY = self.y - 1
+                                moved = True
+                        else:
+                            if self.x < self.world.cols - 1:
+                                newX = self.x + 1
+                                moved = True
+                    case "A":
+                        if self.x % 2 == 0:
+                            if self.x > 0:
+                                newX = self.x - 1
+                                moved = True
+                        else:
+                            if self.x > 0 and self.y < self.world.rows - 1:
+                                newX = self.x - 1
+                                newY = self.y + 1
+                                moved = True
+                    case "S":
+                            if self.y < self.world.rows - 1:
+                                newY = self.y + 1
+                                moved = True
+                    case "D":
+                            if self.x % 2 == 0:
+                                if self.x < self.world.cols - 1:
+                                    newX = self.x + 1
+                                    moved = True
+                            else:
+                                if self.x < self.world.cols - 1 and self.y < self.world.rows - 1:
+                                    newX = self.x + 1
+                                    newY = self.y + 1
+                                    moved = True
 
         if moved:
             other = self.world.getOrganism(newX, newY)

@@ -62,51 +62,120 @@ class Antelope(Animal):
         # Count available directions
         available = 0
 
-        if self.x > 1:
-            available += 1
+        if self.world.gridType == "square":
+            if self.x > 1:
+                available += 1
 
-        if self.x < self.world.cols - 2:
-            available += 1
+            if self.x < self.world.cols - 2:
+                available += 1
 
-        if self.y > 1:
-            available += 1
+            if self.y > 1:
+                available += 1
 
-        if self.y < self.world.rows - 2:
-            available += 1
+            if self.y < self.world.rows - 2:
+                available += 1
+        else:
+            if self.x > 1 and self.y > 1:
+                available += 1
+
+            if self.y > 1:
+                available += 1
+
+            if self.x < self.world.cols - 2 and self.y > 1:
+                available += 1
+
+            if self.x > 1 and self.y < self.world.rows - 2:
+                available += 1
+
+            if self.y < self.world.rows - 2:
+                available += 1
+
+            if self.x < self.world.cols - 2 and self.y < self.world.rows - 2:
+                available += 1
 
         # Move in a random available direction
-        chosenMove = 4
+        if self.world.gridType == "square":
+            chosenMove = 4
+        else:
+            chosenMove = 6
 
         if available != 0:
             chosenMove = random.randint(0, available - 1)
 
-        # Move up
-        if self.y > 1:
-            if chosenMove == 0:
-                newY = self.y - 2
+        if self.world.gridType == "square":
+            # Move up
+            if self.y > 1:
+                if chosenMove == 0:
+                    newY = self.y - 2
 
-            chosenMove -= 1
+                chosenMove -= 1
 
-        # Move down
-        if self.y < self.world.rows - 2:
-            if chosenMove == 0:
-                newY = self.y + 2
+            # Move down
+            if self.y < self.world.rows - 2:
+                if chosenMove == 0:
+                    newY = self.y + 2
 
-            chosenMove -= 1
+                chosenMove -= 1
 
-        # Move left
-        if self.x > 1:
-            if chosenMove == 0:
-                newX = self.x - 2
+            # Move left
+            if self.x > 1:
+                if chosenMove == 0:
+                    newX = self.x - 2
 
-            chosenMove -= 1
+                chosenMove -= 1
 
-        # Move right
-        if self.x < self.world.cols - 2:
-            if chosenMove == 0:
-                newX = self.x + 2
+            # Move right
+            if self.x < self.world.cols - 2:
+                if chosenMove == 0:
+                    newX = self.x + 2
 
-            chosenMove -= 1
+                chosenMove -= 1
+        else:
+            # Move U-Left
+            if self.x > 1 and self.y > 1:
+                if chosenMove == 0:
+                    newX = self.x - 2
+                    newY = self.y - 1
+
+                chosenMove -= 1
+
+            # Move Up
+            if self.y > 1:
+                if chosenMove == 0:
+                    newY = self.y - 2
+
+                chosenMove -= 1
+
+            # Move U-Right
+            if self.x < self.world.cols - 2 and self.y > 1:
+                if chosenMove == 0:
+                    newX = self.x + 2
+                    newY = self.y - 1
+
+                chosenMove -= 1
+
+            # Move D-Left
+            if self.x > 1 and self.y < self.world.rows - 2:
+                if chosenMove == 0:
+                    newX = self.x - 2
+                    newY = self.y + 1
+
+                chosenMove -= 1
+
+            # Move Down
+            if self.y < self.world.rows - 2:
+                if chosenMove == 0:
+                    newY = self.y + 2
+
+                chosenMove -= 1
+
+            # Move D-Right
+            if self.x < self.world.cols - 2 and self.y < self.world.rows - 2:
+                if chosenMove == 0:
+                    newX = self.x + 2
+                    newY = self.y + 1
+
+                chosenMove -= 1
 
         if chosenMove < 0:
             other = self.world.getOrganism(newX, newY)

@@ -85,51 +85,182 @@ class Animal(Organism, ABC):
         # Count available directions
         available = 0
 
-        if self.x > 0:
-            available += 1
+        if self.world.gridType == "square":
+            if self.x > 0:
+                available += 1
 
-        if self.x < self.world.cols - 1:
-            available += 1
+            if self.x < self.world.cols - 1:
+                available += 1
 
-        if self.y > 0:
-            available += 1
+            if self.y > 0:
+                available += 1
 
-        if self.y < self.world.rows - 1:
-            available += 1
+            if self.y < self.world.rows - 1:
+                available += 1
+        else:
+            # Up
+            if self.y > 0:
+                available += 1
+
+            # Down
+            if self.y < self.world.rows - 1:
+                available += 1
+
+            if self.x % 2 == 0:
+                # Upper column
+
+                # U-Left
+                if self.x > 0 and self.y > 0:
+                    available += 1
+
+                # D-Left
+                if self.x > 0:
+                    available += 1
+
+                # U-Right
+                if self.x < self.world.cols - 1 and self.y > 0:
+                    available += 1
+
+                # D-Right
+                if self.x < self.world.cols:
+                    available += 1
+            else:
+                # Lower column
+
+                # U-Left
+                if self.x > 0:
+                    available += 1
+
+                # D-Left
+                if self.x > 0 and self.y < self.world.rows - 1:
+                    available += 1
+
+                # U-Right
+                if self.x < self.world.cols:
+                    available += 1
+
+                # D-Right
+                if self.x < self.world.cols - 1 and self.y < self.world.rows - 1:
+                    available += 1
+
 
         # Move in a random available direction
-        chosenMove = 4
+        if self.world.gridType == "square":
+            chosenMove = 4
+        else:
+            chosenMove = 6
 
         if available != 0:
             chosenMove = random.randint(0, available - 1)
 
-        # Move up
-        if self.y > 0:
-            if chosenMove == 0:
-                newY = self.y - 1
+        if self.world.gridType == "square":
+            # Move up
+            if self.y > 0:
+                if chosenMove == 0:
+                    newY = self.y - 1
 
-            chosenMove -= 1
+                chosenMove -= 1
 
-        # Move down
-        if self.y < self.world.rows - 1:
-            if chosenMove == 0:
-                newY = self.y + 1
+            # Move down
+            if self.y < self.world.rows - 1:
+                if chosenMove == 0:
+                    newY = self.y + 1
 
-            chosenMove -= 1
+                chosenMove -= 1
 
-        # Move left
-        if self.x > 0:
-            if chosenMove == 0:
-                newX = self.x - 1
+            # Move left
+            if self.x > 0:
+                if chosenMove == 0:
+                    newX = self.x - 1
 
-            chosenMove -= 1
+                chosenMove -= 1
 
-        # Move right
-        if self.x < self.world.cols - 1:
-            if chosenMove == 0:
-                newX = self.x + 1
+            # Move right
+            if self.x < self.world.cols - 1:
+                if chosenMove == 0:
+                    newX = self.x + 1
 
-            chosenMove -= 1
+                chosenMove -= 1
+        else:
+            # Move up
+            if self.y > 0:
+                if chosenMove == 0:
+                    newY = self.y - 1
+
+                chosenMove -= 1
+
+            # Move down
+            if self.y < self.world.rows - 1:
+                if chosenMove == 0:
+                    newY = self.y + 1
+
+                chosenMove -= 1
+
+            if self.x % 2 == 0:
+                # Upper column
+
+                # Move U-Left
+                if self.x > 0 and self.y > 0:
+                    if chosenMove == 0:
+                        newX = self.x - 1
+                        newY = self.y - 1
+
+                    chosenMove -= 1
+
+                # Move D-Left
+                if self.x > 0:
+                    if chosenMove == 0:
+                        newX = self.x - 1
+
+                    chosenMove -= 1
+
+                # Move U-Right
+                if self.x < self.world.cols - 1 and self.y > 0:
+                    if chosenMove == 0:
+                        newX = self.x + 1
+                        newY = self.y - 1
+
+                    chosenMove -= 1
+
+                # Move D-Right
+                if self.x < self.world.cols - 1:
+                    if chosenMove == 0:
+                        newX = self.x + 1
+
+                    chosenMove -= 1
+            else:
+                # Lower column
+
+                # Move U-Left
+                if self.x > 0:
+                    if chosenMove == 0:
+                        newX = self.x - 1
+
+                    chosenMove -= 1
+
+                # Move D-Left
+                if self.x > 0 and self.y < self.world.rows - 1:
+                    if chosenMove == 0:
+                        newX = self.x - 1
+                        newY = self.y + 1
+
+                    chosenMove -= 1
+
+                # Move U-Right
+                if self.x < self.world.cols - 1:
+                    if chosenMove == 0:
+                        newX = self.x + 1
+
+                    chosenMove -= 1
+
+                # Move D-Right
+                if self.x < self.world.cols - 1 and self.y < self.world.rows - 1:
+                    if chosenMove == 0:
+                        newX = self.x + 1
+                        newY = self.y + 1
+
+                    chosenMove -= 1
+
 
         if chosenMove < 0:
             other = self.world.getOrganism(newX, newY)
